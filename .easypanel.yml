@@ -1,0 +1,6 @@
+# Configuración para Easy Panel
+version: '1.0'
+
+build:
+  dockerfile: Dockerfile.easypanel
+  context: .

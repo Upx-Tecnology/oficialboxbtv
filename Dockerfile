@@ -33,4 +33,4 @@ ENV PORT=3000
 ENV NODE_ENV=production
 
 # Comando para iniciar (usando formato JSON para evitar warnings)
-CMD ["/bin/bash", "-c", "/start.sh"]
+CMD ["/bin/bash", "-c", "chmod +x /start.sh && /start.sh"]

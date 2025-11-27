@@ -8,6 +8,12 @@ echo "📁 Directorio actual: $(pwd)"
 echo "📋 Archivos en el directorio:"
 ls -la
 
+# Asegurar que tenemos bash
+if [ ! -f /bin/bash ]; then
+    echo "⚠️  /bin/bash no encontrado, usando /bin/sh"
+    SHELL=/bin/sh
+fi
+
 # Verificar que package.json existe
 if [ ! -f "package.json" ]; then
     echo "❌ Error: package.json no encontrado"
