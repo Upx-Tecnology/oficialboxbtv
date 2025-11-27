@@ -1,0 +1,67 @@
+version: "3.7"
+
+services:
+  ## --------------------------- OFICIALBOXBTV --------------------------- ##
+  oficialboxbtv:
+    image: tsilvaec/oficialboxbtv:latest
+    container_name: oficialboxbtv
+    restart: unless-stopped
+    
+    networks:
+      - upxnet ## Nome da rede interna
+    
+    environment:
+      ## 🌐 Porta da aplicação
+      - PORT=3000
+      - NODE_ENV=production
+      
+      ## 🌍 Timezone
+      - TZ=America/Sao_Paulo
+    
+    deploy:
+      mode: replicated
+      replicas: 1
+      placement:
+        constraints:
+          - node.role == manager
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
+        reservations:
+          cpus: "0.25"
+          memory: 256M
+      labels:
+        ## Traefik Configuration
+        - traefik.enable=true
+        
+        ## Router Configuration
+        - traefik.http.routers.oficialboxbtv.rule=Host(`oficialboxbtv.com`) || Host(`www.oficialboxbtv.com`)
+        - traefik.http.routers.oficialboxbtv.entrypoints=websecure
+        - traefik.http.routers.oficialboxbtv.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.oficialboxbtv.priority=1
+        
+        ## Service Configuration
+        - traefik.http.routers.oficialboxbtv.service=oficialboxbtv
+        - traefik.http.services.oficialboxbtv.loadbalancer.server.port=3000
+        - traefik.http.services.oficialboxbtv.loadbalancer.passHostHeader=true
+        
+        ## SSL/HTTPS Configuration
+        - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+        - traefik.http.routers.oficialboxbtv.middlewares=sslheader
+        
+        ## Redirect www to non-www (opcional)
+        - traefik.http.routers.oficialboxbtv-www.rule=Host(`www.oficialboxbtv.com`)
+        - traefik.http.routers.oficialboxbtv-www.entrypoints=websecure
+        - traefik.http.routers.oficialboxbtv-www.tls.certresolver=letsencryptresolver
+        - traefik.http.routers.oficialboxbtv-www.middlewares=redirect-to-non-www
+        - traefik.http.middlewares.redirect-to-non-www.redirectregex.regex=^https://www\\.oficialboxbtv\\.com/(.*)
+        - traefik.http.middlewares.redirect-to-non-www.redirectregex.replacement=https://oficialboxbtv.com/$${1}
+        - traefik.http.middlewares.redirect-to-non-www.redirectregex.permanent=true
+
+## --------------------------- REDES --------------------------- ##
+networks:
+  upxnet: ## Nome da rede interna
+    external: true
+    name: upxnet ## Nome da rede interna
+
