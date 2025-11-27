@@ -1,0 +1,38 @@
+# Dependencies
+node_modules/
+# package-lock.json (mantener para consistencia en producción)
+
+# Build output
+dist/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Scraped content (opcional - descomentar si no quieres subir el contenido scraped)
+# scraped-content/
+
+# Screenshots y archivos temporales
+screenshot-*.png
+verification-report.json
+
+# Playwright
+.playwright/
