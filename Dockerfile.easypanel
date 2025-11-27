@@ -1,8 +1,5 @@
-# Dockerfile para Docker Hub (también compatible con Easy Panel)
-FROM node:18-alpine
-
-# Instalar dependencias del sistema si son necesarias
-RUN apk add --no-cache bash
+# Dockerfile específico para Easy Panel (usa su imagen base)
+FROM easypanel/base:latest
 
 # Establecer directorio de trabajo
 WORKDIR /app
@@ -34,3 +31,4 @@ ENV NODE_ENV=production
 
 # Comando para iniciar (usando formato JSON para evitar warnings)
 CMD ["/bin/bash", "-c", "/start.sh"]
+
