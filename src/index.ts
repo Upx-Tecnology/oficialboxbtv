@@ -5,7 +5,7 @@ import { cleanHtml } from './utils/html-cleaner';
 import { TemplateHelper } from './utils/template-helper';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT || '3000', 10);
 const SCRAPED_CONTENT_DIR = path.join(__dirname, '..', 'scraped-content');
 const PUBLIC_DIR = path.join(__dirname, '..', 'public');
 
