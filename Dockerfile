@@ -8,8 +8,11 @@ WORKDIR /app
 COPY build.sh /build.sh
 COPY start.sh /start.sh
 
-# Ejecutar build
-RUN chmod +x /build.sh && /build.sh
+# Dar permisos de ejecución
+RUN chmod +x /build.sh /start.sh
 
-# Comando para iniciar
-CMD chmod +x /start.sh && /start.sh
+# Ejecutar build
+RUN /build.sh
+
+# Comando para iniciar (usando formato JSON para evitar warnings)
+CMD ["/bin/bash", "-c", "chmod +x /start.sh && /start.sh"]
