@@ -200,8 +200,8 @@ app.get('*', (req, res) => {
   res.status(404).send('Página no encontrada');
 });
 
-app.listen(PORT, () => {
-  console.log(`🚀 Servidor ejecutándose en http://localhost:${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  console.log(`🚀 Servidor ejecutándose en http://0.0.0.0:${PORT}`);
   console.log(`📁 Contenido scraped desde: ${SCRAPED_CONTENT_DIR}`);
   console.log(`📁 HTML básico desde: ${PUBLIC_DIR}`);
   console.log(`✅ Prioridad: HTML básico > Contenido scraped`);

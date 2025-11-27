@@ -1,30 +1,15 @@
-# Dockerfile para Easy Panel
-FROM node:18-alpine
+FROM easypanel/base:latest
 
-# Establecer directorio de trabajo
+# Copiar archivos del proyecto
+COPY . /app
 WORKDIR /app
 
-# Copiar archivos de configuración
-COPY package.json tsconfig.json ./
+# Copiar scripts de build y start
+COPY build.sh /build.sh
+COPY start.sh /start.sh
 
-# Instalar dependencias
-RUN npm install
+# Ejecutar build
+RUN chmod +x /build.sh && /build.sh
 
-# Copiar código fuente y archivos estáticos
-COPY src/ ./src/
-COPY public/ ./public/
-COPY scraped-content/ ./scraped-content/
-
-# Compilar TypeScript
-RUN npm run build
-
-# Exponer puerto
-EXPOSE 3000
-
-# Variable de entorno por defecto
-ENV PORT=3000
-ENV NODE_ENV=production
-
-# Comando para iniciar el servidor
-CMD ["npm", "start"]
-
+# Comando para iniciar
+CMD chmod +x /start.sh && /start.sh
