@@ -8,9 +8,15 @@ echo "📁 Directorio actual: $(pwd)"
 echo "📋 Archivos en el directorio:"
 ls -la
 
+# Verificar que package.json existe
+if [ ! -f "package.json" ]; then
+    echo "❌ Error: package.json no encontrado"
+    exit 1
+fi
+
 # Instalar TODAS las dependencias (incluyendo devDependencies para TypeScript)
 echo "📦 Instalando dependencias (incluyendo devDependencies)..."
-npm install --include=dev --verbose || {
+npm install --include=dev || {
     echo "❌ Error instalando dependencias"
     echo "📋 Intentando con npm ci..."
     npm ci --include=dev || {
@@ -19,51 +25,50 @@ npm install --include=dev --verbose || {
     }
 }
 
-# Verificar que TypeScript está instalado
-echo "🔍 Verificando TypeScript..."
-if ! npx tsc --version; then
-    echo "❌ TypeScript no encontrado"
-    echo "📦 Intentando instalar TypeScript globalmente..."
-    npm install -g typescript || {
-        echo "❌ Error instalando TypeScript"
-        exit 1
-    }
-fi
-
-# Verificar que package.json existe
-if [ ! -f "package.json" ]; then
-    echo "❌ Error: package.json no encontrado"
+# Verificar que node_modules existe
+if [ ! -d "node_modules" ]; then
+    echo "❌ Error: node_modules no existe después de npm install"
     exit 1
 fi
 
-# Compilar TypeScript
-echo "🔨 Compilando TypeScript..."
-echo "📋 Verificando que tsc está disponible..."
-which tsc || npm list -g typescript || {
-    echo "⚠️  TypeScript no encontrado globalmente, usando npx..."
-}
-
-# Intentar compilar
-if npm run build; then
-    echo "✅ Compilación exitosa con npm run build"
-elif npx tsc; then
-    echo "✅ Compilación exitosa con npx tsc"
-else
-    echo "❌ Error compilando TypeScript"
-    echo "📋 Verificando instalación de TypeScript..."
-    npm list typescript || {
-        echo "❌ TypeScript no está instalado"
-        echo "📦 Instalando TypeScript..."
-        npm install --save-dev typescript || {
-            echo "❌ No se pudo instalar TypeScript"
+# Verificar que TypeScript está instalado
+echo "🔍 Verificando TypeScript..."
+if [ ! -f "node_modules/.bin/tsc" ] && [ ! -f "node_modules/typescript/bin/tsc" ]; then
+    echo "❌ TypeScript no encontrado en node_modules"
+    echo "📦 Verificando si está en devDependencies..."
+    if grep -q '"typescript"' package.json; then
+        echo "⚠️  TypeScript está en package.json pero no se instaló"
+        echo "📦 Reinstalando TypeScript..."
+        npm install typescript --save-dev || {
+            echo "❌ Error instalando TypeScript"
             exit 1
         }
-    }
-    echo "🔄 Reintentando compilación..."
-    npx tsc || {
-        echo "❌ Error en compilación después de instalar TypeScript"
+    else
+        echo "❌ TypeScript no está en package.json"
         exit 1
-    }
+    fi
+fi
+
+# Verificar versión de TypeScript
+echo "📋 Versión de TypeScript:"
+npx tsc --version || ./node_modules/.bin/tsc --version || {
+    echo "❌ No se puede ejecutar tsc"
+    exit 1
+}
+
+# Compilar TypeScript
+echo "🔨 Compilando TypeScript..."
+echo "📋 Ejecutando: npx tsc"
+if npx tsc; then
+    echo "✅ Compilación exitosa con npx tsc"
+elif ./node_modules/.bin/tsc; then
+    echo "✅ Compilación exitosa con ./node_modules/.bin/tsc"
+else
+    echo "❌ Error compilando TypeScript"
+    echo "📋 Mostrando error detallado..."
+    npx tsc --version
+    cat tsconfig.json
+    exit 1
 fi
 
 # Verificar que dist/ existe

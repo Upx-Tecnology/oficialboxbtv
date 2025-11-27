@@ -11,8 +11,7 @@
     "extract": "ts-node src/scripts/extract-content.ts",
     "check-images": "ts-node src/scripts/check-images.ts",
     "download-missing": "ts-node src/scripts/download-missing-images.ts",
-    "verify-pages": "ts-node src/scripts/verify-pages.ts",
-    "postinstall": "npm run build"
+    "verify-pages": "ts-node src/scripts/verify-pages.ts"
   },
   "main": "dist/index.js",
   "keywords": [],
